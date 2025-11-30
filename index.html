@@ -1,0 +1,351 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LAX-QLPM - Quản lý phòng máy</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Inter', 'sans-serif'],
+            },
+            colors: {
+              // Dynamic Theme Colors using CSS Variables
+              primary: 'var(--color-primary)', 
+              'primary-hover': 'var(--color-primary-hover)',
+              secondary: 'var(--color-secondary)',
+            },
+            animation: {
+              'santa-fly': 'santa-fly 20s linear infinite',
+              'dragon-fly': 'dragon-fly 25s ease-in-out infinite',
+              'fade-in': 'fadeIn 0.5s ease-out',
+            },
+            keyframes: {
+              fadeIn: {
+                '0%': { opacity: '0' },
+                '100%': { opacity: '1' },
+              }
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      :root {
+        /* Default Theme (Blue) */
+        --color-primary: #2563eb;       /* blue-600 */
+        --color-primary-hover: #1d4ed8; /* blue-700 */
+        --color-secondary: #475569;     /* slate-600 */
+      }
+
+      body {
+        font-family: 'Inter', sans-serif;
+        background-color: #f8fafc;
+      }
+      
+      /* Custom Scrollbar */
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #f1f5f9; 
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #cbd5e1; 
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8; 
+      }
+
+      /* --- FALLING/FLOATING ITEMS EFFECT (Snow / Flower / Money / Lanterns) --- */
+      .falling-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 9999;
+        display: none;
+      }
+      /* Show container for themes */
+      .theme-snow .falling-container,
+      .theme-tet .falling-container,
+      .theme-mid-autumn .falling-container {
+        display: block;
+      }
+
+      .falling-item {
+        position: absolute;
+        top: -10px;
+        color: #fff;
+        font-size: 1.2em;
+        text-shadow: 0 0 1px #000;
+        animation-name: fall, shake;
+        animation-duration: 10s, 3s;
+        animation-timing-function: linear, ease-in-out;
+        animation-iteration-count: infinite, infinite;
+        animation-play-state: running, running;
+        opacity: 0.9;
+      }
+
+      /* SNOW CONFIG */
+      .theme-snow .falling-item::after {
+        content: '❅';
+      }
+
+      /* TET CONFIG (Flowers, Red Envelopes, Coins) */
+      .theme-tet .falling-item:nth-child(3n)::after {
+        content: '🌸'; /* Cherry Blossom */
+        font-size: 1.2em;
+      }
+      .theme-tet .falling-item:nth-child(3n+1)::after {
+        content: '🧧'; /* Red Envelope */
+        font-size: 1.0em;
+      }
+      .theme-tet .falling-item:nth-child(3n+2)::after {
+        content: '💰'; /* Money Bag */
+        font-size: 1.0em;
+      }
+
+      /* MID-AUTUMN CONFIG (Floating Lanterns, Stars, Mooncakes) */
+      /* Override animation to float UP instead of down */
+      .theme-mid-autumn .falling-item {
+        top: auto;
+        bottom: -50px; /* Start from bottom */
+        animation-name: floatUp, shake; 
+      }
+      
+      .theme-mid-autumn .falling-item:nth-child(3n)::after {
+        content: '🏮'; /* Red Lantern */
+        font-size: 1.2em;
+      }
+      .theme-mid-autumn .falling-item:nth-child(3n+1)::after {
+        content: '⭐️'; /* Star */
+        font-size: 1.0em;
+        color: #fcd34d;
+      }
+      .theme-mid-autumn .falling-item:nth-child(3n+2)::after {
+        content: '🥮'; /* Mooncake */
+        font-size: 0.9em;
+      }
+
+      @keyframes fall {
+        0% { top: -10%; }
+        100% { top: 100%; }
+      }
+      
+      @keyframes floatUp {
+        0% { bottom: -10%; opacity: 0; }
+        10% { opacity: 0.8; }
+        90% { opacity: 0.8; }
+        100% { bottom: 100%; opacity: 0; }
+      }
+
+      @keyframes shake {
+        0% { transform: translateX(0px) rotate(0deg); }
+        50% { transform: translateX(80px) rotate(20deg); }
+        100% { transform: translateX(0px) rotate(0deg); }
+      }
+
+      /* Randomize falling/floating items */
+      .falling-item:nth-of-type(1) { left: 1%; animation-delay: 0s, 0s; }
+      .falling-item:nth-of-type(2) { left: 10%; animation-delay: 1s, 1s; }
+      .falling-item:nth-of-type(3) { left: 20%; animation-delay: 6s, .5s; }
+      .falling-item:nth-of-type(4) { left: 30%; animation-delay: 4s, 2s; }
+      .falling-item:nth-of-type(5) { left: 40%; animation-delay: 2s, 2s; }
+      .falling-item:nth-of-type(6) { left: 50%; animation-delay: 8s, 3s; }
+      .falling-item:nth-of-type(7) { left: 60%; animation-delay: 6s, 2s; }
+      .falling-item:nth-of-type(8) { left: 70%; animation-delay: 2.5s, 1s; }
+      .falling-item:nth-of-type(9) { left: 80%; animation-delay: 1s, 0s; }
+      .falling-item:nth-of-type(10) { left: 90%; animation-delay: 3s, 1.5s; }
+
+
+      /* SANTA FLYING ANIMATION */
+      @keyframes santa-fly {
+        0% { left: -300px; top: 10%; transform: rotate(5deg) scale(0.6); }
+        25% { top: 5%; transform: rotate(0deg) scale(0.6); }
+        50% { top: 10%; transform: rotate(-5deg) scale(0.6); }
+        75% { top: 3%; transform: rotate(0deg) scale(0.6); }
+        100% { left: 100vw; top: 10%; transform: rotate(5deg) scale(0.6); }
+      }
+      .santa-container {
+        position: fixed;
+        z-index: 40;
+        pointer-events: none;
+        animation: santa-fly 30s linear infinite;
+        filter: drop-shadow(0 10px 10px rgba(0,0,0,0.1));
+      }
+
+      /* DRAGON FLYING ANIMATION */
+      @keyframes dragon-fly {
+        0% { left: -400px; top: 15%; transform: translateY(0) scale(0.7); }
+        20% { top: 5%; transform: translateY(-20px) scale(0.7); }
+        40% { top: 15%; transform: translateY(0) scale(0.7); }
+        60% { top: 25%; transform: translateY(20px) scale(0.7); }
+        80% { top: 10%; transform: translateY(-10px) scale(0.7); }
+        100% { left: 110vw; top: 15%; transform: translateY(0) scale(0.7); }
+      }
+      .dragon-container {
+        position: fixed;
+        z-index: 40;
+        pointer-events: none;
+        animation: dragon-fly 25s linear infinite;
+        filter: drop-shadow(0 10px 15px rgba(255, 215, 0, 0.4));
+      }
+
+      /* MOON RABBIT ANIMATION (Mid-Autumn) */
+      @keyframes rabbit-bounce {
+         0%, 100% { transform: translateY(0); }
+         50% { transform: translateY(-10px); }
+      }
+      .rabbit-container {
+         animation: rabbit-bounce 3s ease-in-out infinite;
+      }
+
+      /* DECOR EFFECTS (SNOW CAP & TET DECOR & MID-AUTUMN) */
+      .add-snow-cap {
+        position: relative;
+      }
+      .add-snow-cap::before {
+        content: none;
+        position: absolute;
+        top: -10px;
+        left: 0;
+        right: 0;
+        height: 16px;
+        z-index: 20;
+        pointer-events: none;
+      }
+
+      /* SNOW THEME DECOR */
+      .theme-snow .add-snow-cap::before {
+        content: "";
+        background-color: white;
+        background-image: 
+          radial-gradient(circle at 10px 10px, white 8px, transparent 9px), 
+          radial-gradient(circle at 26px 10px, white 8px, transparent 9px);
+        background-size: 32px 20px;
+        background-repeat: repeat-x;
+        filter: drop-shadow(0 2px 1px rgba(0,0,0,0.1));
+        border-radius: 8px 8px 0 0;
+      }
+
+      /* TET THEME DECOR (Yellow Apricot Blossoms) */
+      .theme-tet .add-snow-cap::before {
+        content: "";
+        top: -12px;
+        height: 24px;
+        /* Pattern representing hanging yellow flowers */
+        background-image: 
+          radial-gradient(circle at 12px 12px, #fcd34d 4px, transparent 5px),
+          radial-gradient(circle at 8px 8px, #fbbf24 3px, transparent 4px),
+          radial-gradient(circle at 16px 8px, #fbbf24 3px, transparent 4px),
+          radial-gradient(circle at 12px 4px, #f59e0b 3px, transparent 4px),
+          
+          radial-gradient(circle at 44px 12px, #fcd34d 4px, transparent 5px),
+          radial-gradient(circle at 40px 8px, #fbbf24 3px, transparent 4px),
+          radial-gradient(circle at 48px 8px, #fbbf24 3px, transparent 4px);
+          
+        background-size: 64px 24px;
+        background-repeat: repeat-x;
+        filter: drop-shadow(0 2px 2px rgba(0,0,0,0.1));
+      }
+
+      /* MID-AUTUMN DECOR (Starry Night Rim) */
+      .theme-mid-autumn .add-snow-cap::before {
+         content: "";
+         top: -8px;
+         height: 16px;
+         background-color: #312e81; /* Indigo-900 */
+         /* Yellow circles/stars pattern */
+         background-image: 
+           radial-gradient(circle at 10px 8px, #fbbf24 2px, transparent 3px),
+           radial-gradient(circle at 30px 5px, #fcd34d 1.5px, transparent 2.5px),
+           radial-gradient(circle at 50px 10px, #fbbf24 2px, transparent 3px);
+         background-size: 60px 16px;
+         border-radius: 8px 8px 0 0;
+         border-bottom: 2px solid #fbbf24; /* Gold trim */
+         box-shadow: 0 4px 6px -1px rgba(49, 46, 129, 0.3);
+      }
+
+      /* WINTER/SPRING SCENE BACKGROUND */
+      .bg-scene {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 250px;
+        pointer-events: none;
+        z-index: 0; /* Behind main content */
+        overflow: hidden;
+      }
+      
+      .tree-sway {
+        transform-origin: bottom center;
+        animation: tree-sway 4s ease-in-out infinite alternate;
+      }
+      .tree-sway-delayed {
+        transform-origin: bottom center;
+        animation: tree-sway 5s ease-in-out infinite alternate-reverse;
+      }
+      
+      .lantern-sway {
+        transform-origin: top center;
+        animation: lantern-sway 3s ease-in-out infinite alternate;
+      }
+
+      @keyframes tree-sway {
+        from { transform: rotate(-3deg); }
+        to { transform: rotate(3deg); }
+      }
+
+      @keyframes lantern-sway {
+         from { transform: rotate(-5deg); }
+         to { transform: rotate(5deg); }
+      }
+      
+      .reindeer-run {
+        animation: reindeer-run 30s linear infinite;
+      }
+      
+      @keyframes reindeer-run {
+        0% { transform: translateX(110vw); } 
+        100% { transform: translateX(-20vw); } 
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.555.0",
+    "recharts": "https://aistudiocdn.com/recharts@^3.5.0",
+    "firebase/app": "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js",
+    "firebase/firestore": "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js",
+    "firebase/analytics": "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js",
+    "file-saver": "https://esm.sh/file-saver@2.0.5",
+    "docx": "https://esm.sh/docx@8.5.0",
+    "firebase/": "https://aistudiocdn.com/firebase@^12.6.0/"
+  }
+}
+</script>
+</head>
+  <body>
+    <div id="root"></div>
+    <!-- Generic Falling Container (Content set via CSS) -->
+    <div class="falling-container" aria-hidden="true">
+      <div class="falling-item"></div><div class="falling-item"></div><div class="falling-item"></div><div class="falling-item"></div>
+      <div class="falling-item"></div><div class="falling-item"></div><div class="falling-item"></div><div class="falling-item"></div>
+      <div class="falling-item"></div><div class="falling-item"></div>
+    </div>
+  </body>
+</html>
