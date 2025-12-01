@@ -15,7 +15,7 @@ interface MachineDetailModalProps {
   currentUser?: UserType;
 }
 
-const CRITICAL_ISSUES = ['CPU', 'Nguồn điện', 'Màn hình'];
+const CRITICAL_ISSUES = ['CPU', 'Hệ điều hành', 'Màn hình'];
 const WARNING_ISSUES = ['Bàn phím', 'Chuột', 'Mạng'];
 const DISPLAY_ISSUES = [...CRITICAL_ISSUES, ...WARNING_ISSUES];
 
